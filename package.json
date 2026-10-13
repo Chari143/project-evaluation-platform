@@ -8,17 +8,21 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/app.ts",
+    "worker:dev": "tsx watch src/worker/evaluationWorker.ts",
     "test": "vitest run"
   },
   "dependencies": {
+    "bullmq": "^6.3.14",
     "cors": "^2.8.6",
     "dotenv": "^18.0.7",
     "express": "^5.3.0",
+    "ioredis": "^6.0.0",
     "pg": "^8.23.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/ioredis": "^4.28.10",
     "@types/pg": "^8.23.1",
     "@types/supertest": "^7.2.1",
     "nodemon": "^3.1.14",
