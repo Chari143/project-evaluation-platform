@@ -58,8 +58,8 @@ CREATE TABLE IF NOT EXISTS rubrics (
 CREATE TABLE IF NOT EXISTS rubric_criteria (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     rubric_id UUID NOT NULL REFERENCES rubrics(id) ON DELETE CASCADE,
-    dimension VARCHAR(64) NOT NULL,       -- e.g. 'Functionality', 'Code Quality'
-    weight NUMERIC(5, 2) NOT NULL,        -- e.g. 25.00 for 25%
+    dimension VARCHAR(64) NOT NULL,       
+    weight NUMERIC(5, 2) NOT NULL,
     description TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS rubric_criteria (
 CREATE INDEX IF NOT EXISTS idx_rubrics_assignment_id ON rubrics(assignment_id);
 CREATE INDEX IF NOT EXISTS idx_rubric_criteria_rubric_id ON rubric_criteria(rubric_id);
 
--- Seed default rubric metrics
+-- Seed data for rubric metrics
 DO $$
 DECLARE
     default_rubric_id UUID;
@@ -87,3 +87,23 @@ BEGIN
             (default_rubric_id, 'Innovation / AI Usage', 10.0, 'Creative approaches, modern tools, AI integration');
     END IF;
 END $$;
+
+
+
+
+
+
+-- 6. Evaluation job table
+CREATE TABLE IF NOT EXISTS evaluation_jobs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    submission_id UUID NOT NULL REFERENCES submissions(id),
+    rubric_id UUID NOT NULL REFERENCES rubrics(id),
+    status VARCHAR(32) NOT NULL DEFAULT 'QUEUED',  -- QUEUED | PROCESSING | COMPLETED | FAILED
+    attempts INT NOT NULL DEFAULT 0,
+    error_message TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_eval_jobs_submission_id ON evaluation_jobs(submission_id);
+CREATE INDEX IF NOT EXISTS idx_eval_jobs_status ON evaluation_jobs(status);
